@@ -1,0 +1,54 @@
+--- Create a data extension with the following fields:
+-- Month - Text - 2 - Pk
+-- Year - Text - 4 - PK
+-- NewSubscribers - Number - Nullable
+-- SentCount - Number - Nullable
+-- InsertDate - Date - Nullable
+
+--- if your org has a large amount of data, create one query per month and add all of them to Automation Studio. All queries should use the UPDATE format.
+---- Create an SQL Activity with this query
+---------- New Subscribers
+
+SELECT DISTINCT
+    COUNT(DISTINCT s.SubscriberKey) AS NewSubscribers,
+    DATEPART(MONTH, s.DateJoined) AS Month,
+    DATEPART(YEAR, s.DateJoined) AS Year,
+    GETDATE() AS InsertDate
+FROM
+    _Subscribers s
+WHERE
+    s.Status = 'Active'
+    AND s.DateJoined >= DATEADD(MONTH, -6, GETDATE())
+    AND s.DateJoined <= GETDATE()
+GROUP BY
+    DATEPART(MONTH, s.DateJoined),
+    DATEPART(YEAR, s.DateJoined)
+
+---- Create an SQL Activity with this query
+----- sentcount
+
+SELECT DISTINCT
+    COUNT(DISTINCT s.SubscriberKey) AS SentCount,
+    DATEPART(MONTH, s.EventDate) AS Month,
+    DATEPART(YEAR, s.EventDate) AS Year,
+    GETDATE() AS InsertDate
+FROM
+    _Sent s
+WHERE
+    s.EventDate >= DATEADD(MONTH, -6, GETDATE())
+    AND s.EventDate <= GETDATE()
+GROUP BY
+    DATEPART(MONTH, s.EventDate),
+    DATEPART(YEAR, s.EventDate)
+
+---- Create an SQL Activity with this query
+------------- active
+SELECT DISTINCT
+    COUNT(DISTINCT s.SubscriberKey) AS TotalActiveSubscribersNow,
+    DATEPART(MONTH, GETDATE()) AS Month,
+    DATEPART(YEAR, GETDATE()) AS Year,
+    GETDATE() AS InsertDate
+FROM
+    _Subscribers s
+WHERE
+    s.Status = 'Active'
