@@ -3,6 +3,7 @@
 -- Year - Text - 4 - PK
 -- NewSubscribers - Number - Nullable
 -- SentCount - Number - Nullable
+-- TotalActiveSubscribersNow - Number - Nullable
 -- InsertDate - Date - Nullable
 
 --- if your org has a large amount of data, create one query per month and add all of them to Automation Studio. All queries should use the UPDATE format.
